@@ -2,9 +2,9 @@ package main
 
 import (
 	"crawler/engine"
+	"crawler/parser/zhenai"
 	"crawler/persist"
 	"crawler/scheduler"
-	"crawler/zhenai"
 )
 
 func main() {
