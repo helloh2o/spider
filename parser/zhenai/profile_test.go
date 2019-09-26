@@ -12,7 +12,7 @@ import (
 )
 
 func TestParseProfile(t *testing.T) {
-	f, err := os.Open("profile.html")
+	f, err := os.Open("profile.txt")
 	if err != nil {
 		panic(err)
 	}
@@ -44,7 +44,7 @@ func TestParseProfile2(t *testing.T) {
 }
 
 func TestGoQuery(t *testing.T) {
-	f, err := os.Open("profile.html")
+	f, err := os.Open("profile.txt")
 	if err != nil {
 		panic(err)
 	}

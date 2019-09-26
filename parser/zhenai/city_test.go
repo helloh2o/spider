@@ -11,7 +11,7 @@ import (
 
 func TestParseCityList(t *testing.T) {
 	const expectedSize = 470
-	f, err := os.Open("city.html")
+	f, err := os.Open("city.txt")
 	if err != nil {
 		panic(err)
 	}
@@ -25,7 +25,7 @@ func TestParseCityList(t *testing.T) {
 
 func TestParseCity(t *testing.T) {
 	const expectedSize = 20
-	f, err := os.Open("page.html")
+	f, err := os.Open("page.txt")
 	if err != nil {
 		panic(err)
 	}
