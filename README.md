@@ -1,2 +1,2 @@
 # spider
-A simple spider engine, leaning from my master ccmouse
+A simple distributed spider engine, leaning from my master ccmouse
