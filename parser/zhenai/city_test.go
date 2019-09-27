@@ -3,6 +3,7 @@ package zhenai
 import (
 	"crawler/engine"
 	lg "crawler/log"
+	"encoding/base64"
 	"errors"
 	"io/ioutil"
 	"os"
@@ -15,7 +16,7 @@ func TestParseCityList(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	bytes, err := ioutil.ReadAll(f)
+	bytes, err := ioutil.ReadAll(base64.NewDecoder(base64.StdEncoding, f))
 	list := ParseCityList(&engine.Request{}, bytes)
 	lg.Printf("city size %d", len(list.Items))
 	if len(list.Requests) != expectedSize {
@@ -29,7 +30,7 @@ func TestParseCity(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	bytes, err := ioutil.ReadAll(f)
+	bytes, err := ioutil.ReadAll(base64.NewDecoder(base64.StdEncoding, f))
 	list := ParseCity(nil, bytes)
 	lg.Printf("user size %d", len(list.Items))
 	if len(list.Items) != expectedSize {

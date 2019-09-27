@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crawler/engine"
 	lg "crawler/log"
+	"encoding/base64"
 	"github.com/PuerkitoBio/goquery"
 	"io/ioutil"
 	"net/http"
@@ -16,7 +17,7 @@ func TestParseProfile(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	data, err := ioutil.ReadAll(f)
+	data, err := ioutil.ReadAll(base64.NewDecoder(base64.StdEncoding, f))
 	if err != nil {
 		panic(err)
 	}
@@ -48,7 +49,7 @@ func TestGoQuery(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	data, err := ioutil.ReadAll(f)
+	data, err := ioutil.ReadAll(base64.NewDecoder(base64.StdEncoding, f))
 	if err != nil {
 		panic(err)
 	}
